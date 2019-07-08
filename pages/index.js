@@ -1,18 +1,14 @@
-import React from "react";
-import NextSeo from "next-seo";
 import { connect } from "react-redux";
-import NavigationBar from "../src/components/Layout/NavigationBar";
-import FooterBar from "../src/components/Layout/FooterBar";
-import MainPageContainer from "../src/components/MainPageContainer";
-import { DEFAULT_SEO } from "../src/config";
+import Head from "next/head";
+import FramelessViewerPageContainer from "../src/components/FramelessViewer/FramelessViewerPageContainer";
 
-const VerifierPage = () => (
-  <>
-    <NextSeo config={DEFAULT_SEO} />
-    <NavigationBar active="home" />
-    <MainPageContainer />
-    <FooterBar />
-  </>
+const FramelessViewerPage = () => (
+  <div>
+    <Head>
+      <title>OpenCerts - Frameless Certificate Viewer</title>
+    </Head>
+    <FramelessViewerPageContainer />
+  </div>
 );
 
-export default connect()(VerifierPage);
+export default connect()(FramelessViewerPage);
