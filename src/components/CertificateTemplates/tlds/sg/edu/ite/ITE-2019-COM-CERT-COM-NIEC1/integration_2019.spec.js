@@ -6,9 +6,6 @@ import { getData } from "@govtechsg/open-attestation";
 fixture("Institute of Technical Education").page`http://localhost:3000`;
 
 const Certificate = "./ITE_TEST-2019-CERT-COM-NIEC1.opencert";
-
-// Only Certficate, No Transcript
-// const TemplateTabList = Selector("#template-tabs-list");
 const RenderedCertificate = Selector("#rendered-certificate");
 
 const validateTextContent = async (t, component, texts) =>
