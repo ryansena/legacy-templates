@@ -1,4 +1,4 @@
 npm run build:static && \
-cp src/components/FramelessViewer/demo-iframe.html out/demo-iframe.html && \
-npm run integration:headless -- \
+cp scripts/e2e/demo-iframe.html out/demo-iframe.html && \
+npm run integration:headless -- scripts/**/*.spec.js \
 --app "npm run serve-static"
