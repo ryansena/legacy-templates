@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { get } from "lodash";
 import InvalidCertificateNotice from "../InvalidCertificateNotice";
-import { analyticsEvent } from "../../Analytics";
 
 /**
  * Retrieves the contract store address from the provided certificate
@@ -35,19 +34,7 @@ const storeCanRenderTemplate = ({ whitelist, document }) => {
  */
 class MultiCertificateRenderer extends Component {
   componentDidMount() {
-    const {
-      document,
-      templates,
-      updateParentHeight,
-      updateParentTemplates
-    } = this.props;
-
-    // Analytics
-    analyticsEvent(window, {
-      category: "CERTIFICATE_VIEWED",
-      action: get(document, "issuers[0].certificateStore"),
-      label: get(document, "id")
-    });
+    const { templates, updateParentHeight, updateParentTemplates } = this.props;
 
     // Templates
     updateParentTemplates(templates);

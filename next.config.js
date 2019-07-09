@@ -16,12 +16,7 @@ module.exports = withBundleAnalyzer(
       cssModules: true,
       exportPathMap: function exportMap() {
         return {
-          "/": { page: "/" },
-          "/registry": { page: "/registry" },
-          "/privacy": { page: "/privacy" },
-          "/viewer": { page: "/viewer" },
-          "/faq": { page: "/faq" },
-          "/frameless-viewer": { page: "/frameless-viewer" }
+          "/": { page: "/" }
         };
       },
       // Variables passed to both server and client

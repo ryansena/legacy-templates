@@ -1,11 +1,5 @@
-import withRedux from "next-redux-wrapper";
 import App, { Container } from "next/app";
-import Router from "next/router";
-import withGA from "next-ga";
 import React from "react";
-import { Provider } from "react-redux";
-import initStore from "../src/store";
-import { GA_ID } from "../src/config";
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -19,16 +13,13 @@ class MyApp extends App {
   }
 
   render() {
-    const { Component, pageProps, store } = this.props;
+    const { Component, pageProps } = this.props;
     return (
       <Container>
-        <Provider store={store}>
-          <Component {...pageProps} />
-        </Provider>
+        <Component {...pageProps} />
       </Container>
     );
   }
 }
 
-const appWrappedWithGA = withGA(GA_ID, Router)(MyApp);
-export default withRedux(initStore)(appWrappedWithGA);
+export default MyApp;

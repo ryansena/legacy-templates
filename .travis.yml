@@ -10,7 +10,7 @@ jobs:
       script:
         - npm run lint
         - npm run test -- --coverage=true
-        - ./scripts/sonar-runner.sh
+        # - ./scripts/sonar-runner.sh
     - stage: integration
       script:
         - echo "skipping tests"
