@@ -6,8 +6,6 @@ import { getData } from "@govtechsg/open-attestation";
 fixture("Ngee Ann Polytechnic").page`http://localhost:3000`;
 
 const Certificate = "./NP_Certs_DPP_2019.opencert";
-
-const TemplateTabList = Selector("#template-tabs-list");
 const RenderedCertificate = Selector("#rendered-certificate");
 
 const validateTextContent = async (t, component, texts) =>
