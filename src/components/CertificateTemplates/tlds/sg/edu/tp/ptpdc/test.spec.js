@@ -1,10 +1,11 @@
 import { Selector } from "testcafe";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { getData } from "@govtechsg/open-attestation";
 
 fixture("Temasek Polytechnic").page`http://localhost:3000`;
 
 const Certificate = "./sample.opencert";
-
-const TemplateTabList = Selector("#template-tabs-list");
 const RenderedCertificate = Selector("#rendered-certificate");
 const TpLogo = Selector('img[title="Temasek Polytechnic"]');
 
@@ -15,9 +16,20 @@ const validateTextContent = async (t, component, texts) =>
   );
 
 test("Part-time Post Diploma Certificate is rendered correctly.", async t => {
-  await t.setFilesToUpload("input[type=file]", [Certificate]);
+  // Inject javascript and execute window.opencerts.renderDocument
+  const certificateContent = getData(
+    JSON.parse(readFileSync(join(__dirname, Certificate)).toString())
+  );
+  await t.eval(() => window.opencerts.renderDocument(certificateContent), {
+    dependencies: { certificateContent }
+  });
 
-  await t.expect(TemplateTabList.textContent).contains("Certificate");
+  // Check content of window.opencerts.templates
+  await t.wait(500);
+  const templates = await t.eval(() => window.opencerts.getTemplates());
+  await t
+    .expect(templates)
+    .eql([{ id: "certificate", label: "Certificate", template: undefined }]);
 
   await t.expect(TpLogo.exists).ok();
 

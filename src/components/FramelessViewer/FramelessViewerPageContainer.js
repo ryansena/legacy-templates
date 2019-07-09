@@ -18,10 +18,12 @@ class FramelessViewerContainer extends Component {
     this.updateParentHeight = this.updateParentHeight.bind(this);
     this.updateParentTemplates = this.updateParentTemplates.bind(this);
     this.obfuscateDocument = this.obfuscateDocument.bind(this);
+    this.getTemplates = this.getTemplates.bind(this);
     this.state = {
       parentFrameConnection: null,
       document: null,
-      tabIndex: 0
+      tabIndex: 0,
+      templates: null
     };
   }
 
@@ -32,10 +34,12 @@ class FramelessViewerContainer extends Component {
   componentDidMount() {
     const selectTemplateTab = this.selectTemplateTab;
     const renderDocument = this.handleDocumentChange;
+    const getTemplates = this.getTemplates;
 
     window.opencerts = {
       renderDocument,
-      selectTemplateTab
+      selectTemplateTab,
+      getTemplates
     };
 
     if (inIframe()) {
@@ -111,6 +115,11 @@ class FramelessViewerContainer extends Component {
         parent.updateTemplates(formatTemplate(templates));
       }
     }
+    this.setState({ templates });
+  }
+
+  getTemplates() {
+    return this.state.templates;
   }
 
   render() {

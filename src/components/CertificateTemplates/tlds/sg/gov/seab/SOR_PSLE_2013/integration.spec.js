@@ -1,11 +1,12 @@
 import { Selector } from "testcafe";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { getData } from "@govtechsg/open-attestation";
 
 fixture("Singapore Examinations and Assessment Board (SOR_PSLE_2013)")
   .page`http://localhost:3000`;
 
 const Certificate = "./SOR_ALL-2015_PSLE_00073E.opencert";
-
-const TemplateTabList = Selector("#template-tabs-list");
 const RenderedCertificate = Selector("#rendered-certificate");
 
 const validateTextContent = async (t, component, texts) =>
@@ -15,12 +16,23 @@ const validateTextContent = async (t, component, texts) =>
   );
 
 test("sg/gov/seab/SOR_PSLE_2013 is rendered correctly", async t => {
-  // Uploads and click link certificate via dropzone
-  await t.setFilesToUpload("input[type=file]", [Certificate]);
+  // Inject javascript and execute window.opencerts.renderDocument
+  const certificateContent = getData(
+    JSON.parse(readFileSync(join(__dirname, Certificate)).toString())
+  );
+  await t.eval(() => window.opencerts.renderDocument(certificateContent), {
+    dependencies: { certificateContent }
+  });
 
-  // Certificate tabs rendered
-  await t.expect(TemplateTabList.textContent).contains("Statement of Results");
-  await t.expect(TemplateTabList.textContent).contains("Explanatory Notes");
+  // Check content of window.opencerts.templates
+  await t.wait(500);
+  const templates = await t.eval(() => window.opencerts.getTemplates());
+  await t
+    .expect(templates)
+    .eql([
+      { id: "sor", label: "Statement of Results", template: undefined },
+      { id: "explanatorydtl", label: "Explanatory Notes", template: undefined }
+    ]);
 
   // SOR tab content
   await validateTextContent(t, RenderedCertificate, [
@@ -42,8 +54,7 @@ test("sg/gov/seab/SOR_PSLE_2013 is rendered correctly", async t => {
   ]);
 
   // Navigate to Explanatory Notes tab
-  const explanatoryNotesTab = TemplateTabList.find(":nth-child(2)");
-  await t.click(explanatoryNotesTab);
+  await t.eval(() => window.opencerts.selectTemplateTab(1));
 
   // Explanatory Notes tab content
   await validateTextContent(t, RenderedCertificate, [

@@ -1,4 +1,7 @@
 import { Selector } from "testcafe";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { getData } from "@govtechsg/open-attestation";
 
 fixture("Institute of Technical Education").page`http://localhost:3000`;
 
@@ -15,11 +18,20 @@ const validateTextContent = async (t, component, texts) =>
   );
 
 test("ITE-2019-COM-CERT-COM1 certificate is rendered correctly", async t => {
-  // Uploads certificate via dropzone
-  await t.setFilesToUpload("input[type=file]", [Certificate]);
+  // Inject javascript and execute window.opencerts.renderDocument
+  const certificateContent = getData(
+    JSON.parse(readFileSync(join(__dirname, Certificate)).toString())
+  );
+  await t.eval(() => window.opencerts.renderDocument(certificateContent), {
+    dependencies: { certificateContent }
+  });
 
-  // Certificate rendered
-  // await t.expect(TemplateTabList.textContent).contains("Certificate");
+  // Check content of window.opencerts.templates
+  await t.wait(500);
+  const templates = await t.eval(() => window.opencerts.getTemplates());
+  await t
+    .expect(templates)
+    .eql([{ id: "certificate", label: "Certificate", template: undefined }]);
 
   // Certificate content
   await validateTextContent(t, RenderedCertificate, [

@@ -1,10 +1,11 @@
 import { Selector } from "testcafe";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { getData } from "@govtechsg/open-attestation";
 
 fixture("Temasek Polytechnic").page`http://localhost:3000`;
 
 const Certificate = "./sample.opencert";
-
-const TemplateTabList = Selector("#template-tabs-list");
 const RenderedCertificate = Selector("#rendered-certificate");
 const TpLogo = Selector('img[title="Temasek Polytechnic"]');
 const SussLogo = Selector(
@@ -18,10 +19,23 @@ const validateTextContent = async (t, component, texts) =>
   );
 
 test("Part-time Joint Specialist Diploma with SUSS is rendered correctly.", async t => {
-  await t.setFilesToUpload("input[type=file]", [Certificate]);
+  // Inject javascript and execute window.opencerts.renderDocument
+  const certificateContent = getData(
+    JSON.parse(readFileSync(join(__dirname, Certificate)).toString())
+  );
+  await t.eval(() => window.opencerts.renderDocument(certificateContent), {
+    dependencies: { certificateContent }
+  });
 
-  await t.expect(TemplateTabList.textContent).contains("Certificate");
-  await t.expect(TemplateTabList.textContent).contains("Transcript");
+  // Check content of window.opencerts.templates
+  await t.wait(500);
+  const templates = await t.eval(() => window.opencerts.getTemplates());
+  await t
+    .expect(templates)
+    .eql([
+      { id: "certificate", label: "Certificate", template: undefined },
+      { id: "transcript", label: "Transcript", template: undefined }
+    ]);
 
   await t.expect(TpLogo.exists).ok();
   await t.expect(SussLogo.exists).ok();
@@ -36,8 +50,8 @@ test("Part-time Joint Specialist Diploma with SUSS is rendered correctly.", asyn
     "The programme is supported by"
   ]);
 
-  const transcriptTab = TemplateTabList.find(":nth-child(2)");
-  await t.click(transcriptTab);
+  // Navigate to next tab using window.opencerts.selectTemplateTab
+  await t.eval(() => window.opencerts.selectTemplateTab(1));
 
   // transcript tab content
   await validateTextContent(t, RenderedCertificate, [

@@ -7,6 +7,8 @@ const RenderButton = Selector("#render-certificate");
 const IFrame = Selector("#frameless-iframe");
 const RenderedCertificate = Selector("#rendered-certificate");
 const TranscriptButton = Selector("#selector-transcript");
+const MediaButton = Selector("#selector-media");
+const Media = Selector("#youtube-vid");
 
 const validateTextContent = async (t, component, texts) =>
   texts.reduce(
@@ -23,9 +25,11 @@ test("Default certificate is rendered correctly", async t => {
 
   // Validate content of first tab
   await validateTextContent(t, RenderedCertificate, [
-    "Principal",
-    "Council Chairman",
-    "A3DA180001"
+    "This is to certify that",
+    "Your Name",
+    "has successfully completed the",
+    "OpenCerts Demo",
+    "certification through training administered by"
   ]);
 
   // Click on transcript button
@@ -35,7 +39,18 @@ test("Default certificate is rendered correctly", async t => {
 
   // Validate content of second tab
   await validateTextContent(t, RenderedCertificate, [
-    "TRANSCRIPT OF ACADEMIC RECORD",
-    "DIRECTOR, ACADEMIC AFFAIRS"
+    "CS 1110",
+    "Introduction to Programming",
+    "SXXXXXXXY",
+    "53b75bbe"
   ]);
+
+  // Click on media button
+  await t.switchToMainWindow();
+  await t.click(MediaButton);
+  await t.switchToIframe(IFrame);
+
+  // Validate content of media tab
+  await t.wait(1000);
+  await t.expect(Media.visible).ok();
 });

@@ -1,10 +1,12 @@
 import { Selector } from "testcafe";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { getData } from "@govtechsg/open-attestation";
 
 fixture("Ngee Ann Polytechnic").page`http://localhost:3000`;
 
 const Certificate = "./NP_Certs_DPP_2018.opencert";
 
-const TemplateTabList = Selector("#template-tabs-list");
 const RenderedCertificate = Selector("#rendered-certificate");
 
 const validateTextContent = async (t, component, texts) =>
@@ -14,12 +16,23 @@ const validateTextContent = async (t, component, texts) =>
   );
 
 test("DPP 2018 certificate is rendered correctly", async t => {
-  // Uploads certificate via dropzone
-  await t.setFilesToUpload("input[type=file]", [Certificate]);
+  // Inject javascript and execute window.opencerts.renderDocument
+  const certificateContent = getData(
+    JSON.parse(readFileSync(join(__dirname, Certificate)).toString())
+  );
+  await t.eval(() => window.opencerts.renderDocument(certificateContent), {
+    dependencies: { certificateContent }
+  });
 
-  // Certificate tabs rendered
-  await t.expect(TemplateTabList.textContent).contains("Certificate");
-  await t.expect(TemplateTabList.textContent).contains("Transcript");
+  // Check content of window.opencerts.templates
+  await t.wait(500);
+  const templates = await t.eval(() => window.opencerts.getTemplates());
+  await t
+    .expect(templates)
+    .eql([
+      { id: "certificate", label: "Certificate", template: undefined },
+      { id: "transcript", label: "Transcript", template: undefined }
+    ]);
 
   // Certificate tab content
   await validateTextContent(t, RenderedCertificate, [
@@ -33,8 +46,7 @@ test("DPP 2018 certificate is rendered correctly", async t => {
   ]);
 
   // Navigate to Transcript tab
-  const transcriptTab = TemplateTabList.find(":nth-child(2)");
-  await t.click(transcriptTab);
+  await t.eval(() => window.opencerts.selectTemplateTab(1));
 
   // Transcript tab content
   await validateTextContent(t, RenderedCertificate, [
