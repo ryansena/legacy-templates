@@ -5,21 +5,7 @@ import { IMG_CERT_SPLOGO, IMG_CERT_SEAL } from './Certimages'
 
 
 const Template = ({ certificate }) => {
-/* tested:
-const dispRow = (pstringItem) => (
-  <div className="h2 my-0 font-weight-bold d-flex justify-content-center"
-	style={{fontFamily:'Times', fontVariant:'small-caps'}} >
-	{pstringItem} </div>
-)
 
-const infoAdd = (xobject) => {
-	var xstr = xobject.length + ": <br/> "+ xobject[0] + xobject[1];
-	// NG the br tag shows !
-return xstr;
-}
-
-const addOn = get(certificate,'additionalData.diplomaAddOn')
-*/
 const addOnDisp = get(certificate,'additionalData.diplomaAddOn').map((txtArr,i) => (
   <div className="h2 my-0 font-weight-bold d-flex justify-content-center"
     style={{fontFamily:'Times', fontVariant:'small-caps'}} >
@@ -39,15 +25,6 @@ return (
     {certificate.additionalData.diplomaName} </div>
 	
   {
-   /* tested:
-   ok: { dispRow (get(certificate, 'additionalData.diplomaAddOn.length')) }
-   // ok: { dispRow (get(certificate, 'additionalData.diplomaAddOn.[0]')) }
-  
-  // ok: { dispRow (get(certificate, 'additionalData.diplomaAddOn.[0]')) }
-  // <div className="h3"> plain:  <br/>{ infoAdd(addOn)  } </div>
-  // <div className="h4"> join with format: <br/>{ infoAdd(addOn) && `info: ${infoAdd(addOn)}`  }  </div>
-  // <div className="h4"> formatted only: <br/> { `info: ${infoAdd(addOn)}`  }  </div>
-  */
 	  addOnDisp
   }
 
