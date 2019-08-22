@@ -3,18 +3,8 @@ import { format } from 'date-fns'
 import { get } from 'lodash';
 
 const renderHeader = p_Cert => {
-  //const serial = p_Cert.additionalData.studentid
-  // also OK: get(p_Cert, "additionalData.studentid");
   return (
   <div className="container">
-  {/*<div className="row">
-      <div className="col" />
-      <div className="col-10 h3 font-weight-bold d-flex justify-content-center"
-        style={{fontFamily:'Times' }}>
-          ACADEMIC TRANSCRIPT
-        </div>
-      <div className="col" />
-  </div>*/ }
     <div className="row h3 my-4">
       <div className="col font-weight-bold text-lg-center">
         ACADEMIC TRANSCRIPT
@@ -34,8 +24,6 @@ const renderHeader = p_Cert => {
       <div className="col-2"> Name: </div>
 	  <div className="col"> {p_Cert.recipient.name} </div>
 	</div>
-    {/*<hr className="mb-1" />
-    <hr className="my-0" /> */}
   </div>
   )
 }
@@ -177,12 +165,9 @@ const renderEachModule = (p_objMod,iSn) => {
   )
 }
 
-      //<div className="col-2">{objOthItems && `oth:${xoth}`}</div>
 const renderTermTranscript = (p_ObjTranscript,iSn) => {
   var xs = get(p_ObjTranscript, 'name')
-  //ok: var xs = p_ObjTranscript.Xname
   const objOthItems = get(p_ObjTranscript, 'otherItems');
-  // ok: const xoth = get(p_ObjTranscript, 'otherItems[0].name');
   const dispOthItems = objOthItems ? objOthItems.map((objItem,i) => (
       <div className="row">
         <div className="col-9" > {objItem.name } </div>
@@ -200,10 +185,6 @@ const renderTermTranscript = (p_ObjTranscript,iSn) => {
 	);
   return (
     <div>
-  {/*<div className="col-6" style={{ fontSize: '0.8rem'}}>
-<div className="row">
-      <div className="col-9">debug: for obj {iSn} </div>
-  </div> */}
     <div className="row mt-2">
       <div className="col-9">{get(p_ObjTranscript, 'name')} </div>
     </div>
@@ -235,7 +216,6 @@ const renderTermTranscript = (p_ObjTranscript,iSn) => {
       <div className="col">{get(p_ObjTranscript, 'cumGPA')}</div>
     </div>
 	{dispOthItems}
-    {/*<hr className="mb-0" /> */}
   </div>  
   )
 }
